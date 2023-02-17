@@ -30,4 +30,15 @@ async def on_ready():
 async def ping(interaction: discord.Interaction):
   await interaction.response.send_message('Pong! Took {0} ms'.format(round(bot.latency, 1)))
 
+@bot.tree.command(name = 'help', description = 'Help Command')
+async def help(interaction: discord.Interaction):
+  embed = discord.Embed(title="DPBs Help", description="Help command for the discord productivity bot")
+  treeCommands = await bot.tree.fetch_commands()
+  for command in treeCommands:
+    description = command.description
+    if not description or description is None or description =="":
+      description = "No description found/provided"
+    embed.add_field(name=f"`/{command.name}`", value=description)
+  await interaction.response.send_message(embed=embed)
+
 bot.run(TOKEN)
