@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.utils import get
 from discord.ext import commands
 
@@ -9,9 +10,16 @@ class Setup(commands.Cog, name = "setup"):
         self.bot = bot
 
     text = 'A command to quickly set up your collabrative environment. Input you connections separated by commas'
-    @commands.hybrid_command(name = 'setup', with_app_command = True, description = text,)
+    @commands.hybrid_command(name = 'setup', with_app_command = True, description = text)
+    @app_commands.describe(connections='Connections to choose from')
+    @app_commands.choices(connections=[
+        discord.app_commands.Choice(name='github, ', value=1),
+        discord.app_commands.Choice(name='teams, ', value=2),
+        discord.app_commands.Choice(name='Email, ', value=3),
+        discord.app_commands.Choice(name='Trello, ', value=4)
+    ])
     @commands.has_permissions(administrator=True)
-    async def setup(self, ctx, connections):
+    async def setup(self, ctx, connections: discord.app_commands.Choice[int]):
 
         await ctx.send('Beginning your server setup!')
 
@@ -44,6 +52,12 @@ class Setup(commands.Cog, name = "setup"):
             await voice.create_voice_channel(name = 'Voice ' + str(i))
 
         await general.send('Your server is now setup!')
+
+    @setup.error
+    async def setp_error(ctx, error):
+        if isinstance(error, commands.CheckFailure):
+            msg = f"{ctx.message.author.mention}, You lack the required permissions for this command."
+            await ctx.send(msg)
 
 async def setup(bot):
     await bot.add_cog(Setup(bot))
