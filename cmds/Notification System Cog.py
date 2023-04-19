@@ -55,8 +55,8 @@ class Notifier(commands.Cog, name="notifier"):
     def create_web_driver(self, username, password):
         # Web Driver Options
         options = webdriver.ChromeOptions()
-        #options.add_argument('headless')  # make sure no window pops up
-        options.add_experimental_option("detach", True)  ## if you want the browser to stay open, uncomment
+        options.add_argument('headless')  # make sure no window pops up
+        #options.add_experimental_option("detach", True)  ## if you want the browser to stay open, uncomment
 
         # Initialize Web Driver
         driver = webdriver.Chrome(options=options)

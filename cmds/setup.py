@@ -139,8 +139,6 @@ class connectionsSelect(Select):
     """Class for adding the connections requested by the user"""
     def __init__(self, server_features, server_state = 'E') -> None:
         super().__init__(
-            min_values = 1,
-            max_values = 3,
             placeholder = 'Choose your connections!',
             options = [
                 discord.SelectOption(

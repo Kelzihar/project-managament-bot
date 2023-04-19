@@ -35,7 +35,7 @@ class aclient(commands.Bot):
       self.added = True
 
     # print ready message and set bot status  
-    await bot.change_presence(activity=discord.Game(name = 'Bot by C&C'))
+    await bot.change_presence(activity=discord.Game(name = 'Use /help for help!'))
     print(f'Bot connected as {bot.user}')
     print(mst_format)
     for cmd_file in CMDS_DIR.glob('*.py'):
