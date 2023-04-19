@@ -113,7 +113,7 @@ class featureSelect(Select):
                     label = 'ChatGPT Implemenation',
                     value = 3,
                     emoji = '🤖',
-                    description = 'Implement our ChatGPT system (Currently not working/implemented)'
+                    description = 'Implement our ChatGPT system (In-Development)'
                 )
         ])
         self.state = server_state
@@ -147,16 +147,6 @@ class connectionsSelect(Select):
                     label = 'GitHub', 
                     emoji = '🤖', 
                     description = 'GitHub connection'
-                ),
-                discord.SelectOption(
-                    label = 'Trello',
-                    emoji = '📆',
-                    description = 'Trello connection'
-                ),
-                discord.SelectOption(
-                    label = 'Microsoft Teams',
-                    emoji = '🤝',
-                    description = 'Microsoft Teams connection',
                 )
             ])
         self.features = server_features
