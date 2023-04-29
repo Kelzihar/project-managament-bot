@@ -9,13 +9,50 @@ from selenium.webdriver.support.ui import Select
 from discord.ui import Select, View
 import discord
 from discord.ext import commands, tasks
+from discord import Intents
 from discord import app_commands
-import asyncio
+from selenium.common.exceptions import NoSuchElementException
 
-client = discord.Client(intents=discord.Intents.all())
+import asyncio
+intents = Intents.default()
+intents.message_content = True
+
+#client = discord.Client(intents=discord.Intents.all())
+client = discord.Client(intents=intents)
+
+
+class verification():
+    def __init__(self) -> None:
+        super().__init__(
+            placeholder = 'Pick a notification source',
+            options = [
+                discord.SelectOption(
+                    label = 'GitHub',
+                    description = 'GitHub notifications'
+                ),
+                discord.SelectOption(
+                    label = 'Google Drive',
+                    description = 'Google Drive notifications'
+                )
+            ])
+
+
+
 
 class webhookOption(Select):
-
+    def __init__(self) -> None:
+        super().__init__(
+            placeholder = 'Pick a notification source',
+            options = [
+                discord.SelectOption(
+                    label = 'GitHub',
+                    description = 'GitHub notifications'
+                ),
+                discord.SelectOption(
+                    label = 'Google Drive',
+                    description = 'Google Drive notifications'
+                )
+            ])
 
     """Class for the select menu for the server state option"""
     def __init__(self) -> None:
@@ -39,8 +76,10 @@ class webhookOption(Select):
             web = await channel.create_webhook(name="GitHub Webhook")
             web_url = str(web.url) + '/github'
             await interaction.response.send_message(
-                content="Navigate to '<repo url>/settings/hooks/new' and copy the below URL into the Add Webhook field " +
+                content="Navigate to '<repo url>/settings/hooks/new'"
+                         +
                         web_url, ephemeral=True)
+
         if self.values[0] == "Google Drive":
             channel = interaction.channel
             await interaction.response.send_message(
@@ -52,11 +91,19 @@ class Notifier(commands.Cog, name="notifier"):
     def __init__(self,bot):
         self.bot = bot
 
+
+    def check_exists_by_xpath(xpath):
+        try:
+            webdriver.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            return False
+        return True
+
     def create_web_driver(self, username, password):
         # Web Driver Options
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')  # make sure no window pops up
-        #options.add_experimental_option("detach", True)  ## if you want the browser to stay open, uncomment
+        #options.add_argument('headless')  # make sure no window pops up
+        options.add_experimental_option("detach", True)  ## if you want the browser to stay open, uncomment
 
         # Initialize Web Driver
         driver = webdriver.Chrome(options=options)
@@ -81,7 +128,6 @@ class Notifier(commands.Cog, name="notifier"):
             print("[!] Login failed")
         else:
             print("[+] Login successful")
-
         return driver
 
     def log_out(self, driver):
@@ -96,6 +142,7 @@ class Notifier(commands.Cog, name="notifier"):
         print("Trying to Create Web Driver")
         driver = self.create_web_driver(username, password)
         print("Created Web Driver")
+
         web_hook_link = repository_url + '/settings/hooks/new'
 
         # retrieve GitHub web_hook link and open page
@@ -191,7 +238,7 @@ class Notifier(commands.Cog, name="notifier"):
     @app_commands.describe(username='Enter a username',
                            password='Enter a password',
                            type='Enter "PV" for your private repositories or "A" for all')
-    async def github_login(self, ctx, username, password, type):
+    async def github_repos(self, ctx, username, password, type):
         # await ctx.send(f'You entered: {username} and {password}')
         test_login = self.create_web_driver(username, password)
         repos = test_login.find_element("css selector", ".js-repos-container")
@@ -212,6 +259,15 @@ class Notifier(commands.Cog, name="notifier"):
             await ctx.send("Here's a list of all of your repositories: \n" + seperator.join(repository_list))
         #print(repository_list)
         test_login.close()
+
+
+    @commands.hybrid_command(name='github_login', with_app_command=True, description='List your GitHub Repos')
+    @app_commands.describe(username='Enter a username',
+                           password='Enter a password')
+    async def github_login(self, ctx, username, password):
+        test_login = self.create_web_driver(username, password)
+        await ctx.defer()
+        await ctx.send(content=f'An email from GitHub with a verification code has been sent to you!')
 
     @commands.hybrid_command(name='delete_webhook', with_app_command=True,
                              description='Create a webhook for the channel.',
