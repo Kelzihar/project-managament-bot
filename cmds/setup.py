@@ -113,7 +113,7 @@ class featureSelect(Select):
                     label = 'ChatGPT Implemenation',
                     value = 3,
                     emoji = '🤖',
-                    description = 'Implement our ChatGPT system (Currently not working/implemented)'
+                    description = 'Implement our ChatGPT system (In-Development)'
                 )
         ])
         self.state = server_state
@@ -139,24 +139,12 @@ class connectionsSelect(Select):
     """Class for adding the connections requested by the user"""
     def __init__(self, server_features, server_state = 'E') -> None:
         super().__init__(
-            min_values = 1,
-            max_values = 3,
             placeholder = 'Choose your connections!',
             options = [
                 discord.SelectOption(
                     label = 'GitHub', 
                     emoji = '🤖', 
                     description = 'GitHub connection'
-                ),
-                discord.SelectOption(
-                    label = 'Trello',
-                    emoji = '📆',
-                    description = 'Trello connection'
-                ),
-                discord.SelectOption(
-                    label = 'Microsoft Teams',
-                    emoji = '🤝',
-                    description = 'Microsoft Teams connection',
                 )
             ])
         self.features = server_features

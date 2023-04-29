@@ -159,7 +159,10 @@ class Scheduler(commands.Cog, name="scheduler"):
                 # Gets the nickname of each user and creates a string from it, with a new line for each user.
                 for x in signups:
                     y = await interaction.guild.fetch_member(x)
-                    newstr += '\n' + str(y.nick)
+                    if y.nick == None or y.nick == 'None':
+                        newstr += '\n' + str(y.display_name)
+                    else:
+                        newstr += '\n' + str(y.nick)
                 # Updates the existing list with the new one.
                 field["value"] = newstr
 
